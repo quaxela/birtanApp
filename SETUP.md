@@ -39,9 +39,9 @@ sıradakini 15 dakikada bir çalışan `rollover-reminders` işi kurar.
 
 1. [onesignal.com](https://onesignal.com) üzerinde bir uygulama oluşturun,
    platform olarak **Web** seçin.
-2. **Typical Site** kurulumunu seçin ve **Site URL** olarak sitenin yayına
-   çıkacağı adresi yazın (örn. `https://poplet.vercel.app`). Adres birebir
-   eşleşmeli.
+2. **Typical Site** kurulumunu seçin ve **Site URL** olarak `https://birtan.vercel.app`
+   yazın. Adres birebir eşleşmeli; Vercel'de proje adını değiştirirseniz burayı
+   da güncelleyin.
 3. OneSignal size bir `OneSignalSDKWorker.js` indirtmek isteyecek — gerek yok,
    o dosya bu depoda zaten var ve içine uygulamanın çevrimdışı kopyası da
    eklenmiş durumda. Bir sayfada tek bir service worker olabildiği için ikisi
@@ -62,7 +62,7 @@ supabase link --project-ref PROJE_REF
 supabase secrets set \
   ONESIGNAL_APP_ID=onesignal-app-id \
   ONESIGNAL_REST_API_KEY=onesignal-rest-anahtari \
-  SITE_URL=https://siteniz.vercel.app
+  SITE_URL=https://birtan.vercel.app
 
 supabase functions deploy sync-reminders
 supabase functions deploy rollover-reminders
