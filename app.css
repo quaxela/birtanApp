@@ -1,0 +1,482 @@
+/* The page is one screen that never scrolls: the sheet is drawn, not laid out,
+   and a stray scroll would slide the drawing out from under the bubbles. */
+
+@font-face {
+  font-family: 'Caveat';
+  src: url('fonts/Caveat-Variable.ttf') format('truetype');
+  font-weight: 400 700;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'PatrickHand';
+  src: url('fonts/PatrickHand-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: block;
+}
+
+:root {
+  --paper: #fcfaf4;
+  --ink: #23355e;
+  --faint: #8a93a5;
+  --hint: #b6becb;
+
+  /* Room for the drawn sides, matching HeadFrameLayout.inset. */
+  --inset: 10px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Caveat', cursive;
+  /* A drag on the sheet is a bubble being carried, never the page moving. */
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  /* Dynamic units, so the mobile browser's collapsing toolbar doesn't leave a
+     strip of blank page under the drawing. */
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+#paper,
+#sheet {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#sheet {
+  /* Every drag on the pile is ours to interpret. */
+  touch-action: none;
+}
+
+/* ---------------------------------------------------------------- top bar */
+
+#topbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  /* The bar itself is not a target; its controls are. */
+  pointer-events: none;
+}
+
+#topbar button,
+#topbar .date-row {
+  pointer-events: auto;
+}
+
+.topbar-row {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.date-row {
+  display: flex;
+  align-items: center;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.cog {
+  position: absolute;
+  left: 0;
+  width: 44px;
+  height: 44px;
+}
+
+.arrow {
+  font-size: 28px;
+  line-height: 1;
+  color: var(--faint);
+  padding: 6px 12px;
+}
+
+.date {
+  font-size: 27px;
+  line-height: 1.1;
+  padding: 4px 6px;
+  color: var(--ink);
+}
+
+.back-today {
+  font-size: 20px;
+  padding: 2px 8px;
+}
+
+.faint-link {
+  font-size: 25px;
+  line-height: 1.1;
+  color: var(--faint);
+  padding: 6px;
+}
+
+.strong-link {
+  font-size: 28px;
+  line-height: 1.1;
+  color: var(--ink);
+  padding: 6px;
+}
+
+.mode {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+/* A word to tap, ringed by hand when it is the one chosen. */
+.word {
+  position: relative;
+  font-size: 29px;
+  line-height: 1.1;
+  padding: 2px 4px;
+  color: var(--faint);
+}
+
+.word.active {
+  color: var(--ink);
+}
+
+/* The canvas a hand-drawn mark is painted on, laid behind whatever it marks
+   and bigger than it on every side — a ring goes outside what it circles. */
+.sketched {
+  position: relative;
+}
+
+.sketch-layer {
+  position: absolute;
+  left: -36px;
+  top: -36px;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------- composer */
+
+.composer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+  padding: 0 24px;
+}
+
+.composer-pill {
+  position: relative;
+  padding: 12px 26px;
+}
+
+.composer input,
+.panel-label {
+  width: 100%;
+  font-family: 'Caveat', cursive;
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  outline: none;
+  caret-color: var(--ink);
+}
+
+.composer input::placeholder {
+  color: var(--hint);
+}
+
+/* ------------------------------------------------------------ edit panel */
+
+#scrim {
+  position: absolute;
+  inset: 0;
+}
+
+.panel {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+}
+
+.panel-body {
+  position: relative;
+  /* Solid, so the pile underneath doesn't show through the words. */
+  background: var(--paper);
+  border-radius: 26px;
+  padding: 12px 22px 10px;
+}
+
+.panel-label {
+  text-align: center;
+}
+
+.panel-time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+  font-size: 22px;
+  color: var(--faint);
+}
+
+.panel-time input {
+  font-family: 'Caveat', cursive;
+  font-size: 24px;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  padding: 2px 4px;
+  outline: none;
+  /* Safari draws its own box round a time field; the page has its own hand. */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.push {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.push-note {
+  margin: 0 0 6px;
+  max-width: 32ch;
+  text-align: center;
+  font-size: 21px;
+  line-height: 1.25;
+  color: var(--faint);
+}
+
+.push-note.is-on {
+  color: var(--ink);
+}
+
+.repeats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+  margin-top: 8px;
+}
+
+.repeats .word {
+  font-size: 23px;
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+.panel-actions .spacer {
+  flex: 1;
+}
+
+/* ------------------------------------------- calendar and settings pages */
+
+.page {
+  position: absolute;
+  inset: 0;
+}
+
+.page-paper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.page-body {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  /* A phone gets the whole width; a wide window keeps the month a month wide
+     rather than stretching a week across a desk. */
+  padding: calc(env(safe-area-inset-top, 0px) + 10px)
+    max(14px, calc((100% - 560px) / 2)) calc(env(safe-area-inset-bottom, 0px) + 18px);
+}
+
+.page-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 400;
+  text-align: center;
+  color: var(--ink);
+}
+
+.heading {
+  margin: 26px 0 10px;
+  font-size: 22px;
+  text-align: center;
+  color: var(--faint);
+}
+
+.month-row {
+  display: flex;
+  align-items: center;
+}
+
+.month-row .arrow {
+  color: var(--ink);
+  font-size: 30px;
+  padding: 6px 14px;
+}
+
+.month-name {
+  flex: 1;
+  text-align: center;
+  font-size: 30px;
+  color: var(--ink);
+}
+
+.weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-top: 10px;
+}
+
+.weekday-row span {
+  text-align: center;
+  font-family: 'PatrickHand', cursive;
+  font-size: 13px;
+  color: var(--faint);
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-top: 6px;
+}
+
+.day-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 54px;
+}
+
+.day-number {
+  position: relative;
+  font-size: 24px;
+  line-height: 1.1;
+  color: var(--faint);
+}
+
+.day-cell.marked-day .day-number,
+.day-cell.chosen .day-number {
+  color: var(--ink);
+}
+
+.day-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--faint);
+}
+
+.day-dot.empty {
+  background: none;
+}
+
+.page-foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.theme-row {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+}
+
+.theme-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.theme-choice canvas {
+  width: 84px;
+  height: 84px;
+  border-radius: 18px;
+  display: block;
+}
+
+.theme-choice .word {
+  font-size: 24px;
+}
+
+.appearance-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+
+.appearance-row .word {
+  font-size: 26px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* A narrow phone gives the swatches less room than three across needs. */
+@media (max-width: 360px) {
+  .theme-choice canvas {
+    width: 72px;
+    height: 72px;
+  }
+
+  .date {
+    font-size: 24px;
+  }
+
+  .word {
+    font-size: 26px;
+  }
+}

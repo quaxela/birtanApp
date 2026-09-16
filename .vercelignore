@@ -1,0 +1,4 @@
+# Sunucu tarafı Vercel'e değil Supabase'e gider; statik sitenin parçası değil.
+supabase
+
+.DS_Store

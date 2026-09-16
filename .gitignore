@@ -1,0 +1,4 @@
+.DS_Store
+
+# Vercel'in bu klasörü hangi projeye bağladığı. Makineye özel.
+.vercel

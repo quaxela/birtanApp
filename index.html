@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<!-- viewport-fit=cover so the drawing runs under the notch; the layout keeps
+     its controls inside the safe area itself. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="description" content="Bugün ne varsa bir baloncuk. Yaptıysan patlat.">
+<meta name="theme-color" content="#FCFAF4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="poplet">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="icons/Icon-192.png">
+<link rel="manifest" href="manifest.json">
+<title>poplet</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="app">
+  <!-- The paper and the frame: redrawn only when the page changes size, the
+       theme changes, or the boil ticks. -->
+  <canvas id="paper"></canvas>
+  <!-- The pile, redrawn every frame it moves. -->
+  <canvas id="sheet"></canvas>
+
+  <header id="topbar">
+    <div class="topbar-row">
+      <button id="cog" class="cog" type="button" aria-label="ayarlar"></button>
+      <div class="date-row">
+        <button class="arrow" type="button" data-step="-1" aria-label="önceki gün">‹</button>
+        <button id="date" class="date" type="button"></button>
+        <button class="arrow" type="button" data-step="1" aria-label="sonraki gün">›</button>
+      </div>
+    </div>
+    <button id="back-today" class="faint-link back-today" type="button" hidden>bugüne dön</button>
+    <div id="mode" class="mode">
+      <button id="mode-add" class="word" type="button">ekle</button>
+      <button id="mode-pop" class="word" type="button">patlat</button>
+    </div>
+  </header>
+
+  <form id="composer" class="composer" hidden>
+    <div class="composer-pill">
+      <input id="composer-input" type="text" autocomplete="off" autocapitalize="none"
+             spellcheck="false" enterkeyhint="done" placeholder="ne unutuyorsun?">
+    </div>
+  </form>
+
+  <div id="scrim" hidden></div>
+
+  <div id="panel" class="panel" hidden>
+    <div class="panel-body">
+      <input id="panel-label" class="panel-label" type="text" enterkeyhint="done" spellcheck="false">
+      <div class="panel-time">
+        <label for="panel-time">saat</label>
+        <input id="panel-time" type="time" step="60">
+      </div>
+      <div id="panel-repeats" class="repeats"></div>
+      <div class="panel-actions">
+        <button id="panel-delete" class="faint-link" type="button">sil</button>
+        <button id="panel-pop" class="faint-link" type="button">patlat</button>
+        <span class="spacer"></span>
+        <button id="panel-save" class="strong-link" type="button">tamam</button>
+      </div>
+    </div>
+  </div>
+
+  <section id="calendar" class="page" hidden>
+    <canvas class="page-paper"></canvas>
+    <div class="page-body">
+      <div class="month-row">
+        <button class="arrow" type="button" data-month="-1" aria-label="önceki ay">‹</button>
+        <div id="month-name" class="month-name"></div>
+        <button class="arrow" type="button" data-month="1" aria-label="sonraki ay">›</button>
+      </div>
+      <div id="weekday-row" class="weekday-row"></div>
+      <div id="month-grid" class="month-grid"></div>
+      <div class="page-foot">
+        <button class="faint-link" type="button" data-close="calendar">kapat</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="settings" class="page" hidden>
+    <canvas class="page-paper"></canvas>
+    <div class="page-body">
+      <h1 class="page-title">ayarlar</h1>
+      <p class="heading">tema</p>
+      <div id="theme-row" class="theme-row"></div>
+      <p class="heading">görünüm</p>
+      <div id="appearance-row" class="appearance-row"></div>
+      <div id="push" class="push" hidden>
+        <p class="heading">hatırlatma</p>
+        <p id="push-note" class="push-note"></p>
+        <button id="push-action" class="word" type="button" hidden>bildirimleri aç</button>
+      </div>
+      <div class="page-foot">
+        <button class="faint-link" type="button" data-close="settings">kapat</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="js/geom.js"></script>
+<script src="js/noise.js"></script>
+<script src="js/rough.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/pen.js"></script>
+<script src="js/boil.js"></script>
+<script src="js/shapes.js"></script>
+<script src="js/dates.js"></script>
+<script src="js/reminder.js"></script>
+<script src="js/store.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/world.js"></script>
+<script src="js/bubbleShape.js"></script>
+<script src="js/background.js"></script>
+<script src="js/headFrame.js"></script>
+<script src="js/text.js"></script>
+<script src="js/controller.js"></script>
+<script src="js/book.js"></script>
+<script src="js/sketchCanvas.js"></script>
+<script src="js/config.js"></script>
+<script src="js/push.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
