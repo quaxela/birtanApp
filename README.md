@@ -24,8 +24,14 @@ Sonra tarayıcıda `http://localhost:8777` adresini açın. (`index.html` dosyas
 tiplerini yüklememesi ve uygulamanın yedek yazı tipiyle çizilmesidir.)
 
 Yayınlamak için klasörün tamamını statik dosya olarak sunan herhangi bir yere
-kopyalamak yeterli. Bu depo Vercel'e bağlı: `main` dalına gönderilen her commit
-kendiliğinden yayına çıkar, derleme adımı olmadan.
+kopyalamak yeterli. Bu kopya Vercel'de duruyor ve yayın elle yapılıyor:
+
+```bash
+npx vercel deploy --prod
+```
+
+Depo ile Vercel arasında otomatik bir bağ yok — `git push` tek başına yayına
+çıkarmaz, yukarıdaki komut gerekir.
 
 ## Ne nerede
 
