@@ -1,4 +1,8 @@
 # Sunucu tarafı Vercel'e değil Supabase'e gider; statik sitenin parçası değil.
 supabase
 
+# Dokümanlar depoda okunur, sitede değil.
+README.md
+SETUP.md
+
 .DS_Store
