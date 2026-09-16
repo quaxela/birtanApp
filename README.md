@@ -9,6 +9,8 @@ Kendi başına, bir sunucuya hiç bağlanmadan çalışır. İsteğe bağlı ola
 hatırlatmalar bildirime dönüşebilir; uygulama kapalıyken telefona düşen türden.
 Onun kurulumu [SETUP.md](SETUP.md) içinde.
 
+Yayında: **https://birtan.vercel.app**
+
 ## Çalıştırmak
 
 Bir yerel sunucu ile:
@@ -22,7 +24,8 @@ Sonra tarayıcıda `http://localhost:8777` adresini açın. (`index.html` dosyas
 tiplerini yüklememesi ve uygulamanın yedek yazı tipiyle çizilmesidir.)
 
 Yayınlamak için klasörün tamamını statik dosya olarak sunan herhangi bir yere
-kopyalamak yeterli.
+kopyalamak yeterli. Bu depo Vercel'e bağlı: `main` dalına gönderilen her commit
+kendiliğinden yayına çıkar, derleme adımı olmadan.
 
 ## Ne nerede
 
